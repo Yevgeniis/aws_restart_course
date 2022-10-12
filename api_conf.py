@@ -52,7 +52,9 @@ class mongo(mvdb):
         #ans=self.col.insert_one({"name":self.filename})
         #self.ans = ans
         fs = gridfs.GridFS(self.db)
-        file_id = fs.put(b"ONE! TWO! THREE! GO ...", filename=f"{self.filename}");
+        with open(self.filename, 'rb') as read_file:
+           file_bin = read_file.read()
+        file_id = fs.put(file_bin, filename=f"{self.filename}")
         print(fs.list())
         print(fs.get(file_id).read())
         return
@@ -75,7 +77,9 @@ class mongo(mvdb):
         #file = mongo.find_data(self)
         fs = gridfs.GridFS(self.db)
         result = fs.find_one({"filename": self.filename})
+        print(result)
         image = result.read()
+        print(image)
         return image
 
 #if __name__ == "__main__":
@@ -96,7 +100,7 @@ imdb = mdb.get_movieid('matri')
 print(imdb)
 mdb.get_image_url(imdb)
 print(mdb.getPosterFile())
-#mdb.insert_data()
+mdb.insert_data()
 print(mdb.read_data())
 #mdb.delete_data()
 
