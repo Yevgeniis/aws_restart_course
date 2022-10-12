@@ -1,8 +1,10 @@
 import requests
 import imdb
 import os
+import pymongo
+import gridfs
 
-class mvdb:
+class mvdb():
 
     def __init__(self):
         self.KEY = os.environ.get('API_Key')
@@ -14,9 +16,9 @@ class mvdb:
         self.IMG_PATTERN = 'http://api.themoviedb.org/3/movie/{imdbid}/images?api_key={KEY}'
 
     def get_movieid(self,movie_name):
-        name = movie_name
+        self.name = movie_name
         ia = imdb.Cinemagoer()
-        search = ia.search_movie(name)
+        search = ia.search_movie(self.name)
         self.movieid = "tt" + str(search[0].movieID)
         return self.movieid
 
@@ -24,31 +26,86 @@ class mvdb:
         self.imgurl = self.IMG_PATTERN.format(KEY=self.KEY,imdbid=imdbid)
         r = requests.get(self.imgurl)
         self.api_response = r.json()
+        self.imgname = self.api_response['posters'][0]['file_path']
+        self.url = "{0}{1}{2}".format(self.base_url, self.sizes, self.imgname)
+        return self.url
 
-        posters = self.api_response['posters']
-        poster_urls = []
-        for poster in posters:
-            imagename = poster['file_path']
-            url = "{0}{1}{2}".format(self.base_url, max_size, imagename)
-            poster_urls.append(url)
-        return self.imgurl
+    def getPosterFile(self):
+        r = requests.get(self.url)
+        filetype = r.headers['content-type'].split('/')[-1]
+        filename = 'poster_{0}.{1}'.format(self.name, filetype)
+        self.filename = filename
+        with open(self.filename, 'wb') as w:
+            w.write(r.content)
+        return self.filename
+
+class mongo(mvdb):
+    """ DAL for mongo DB"""
+    def __init__(self,ip,port,db_name,col_name):
+        mvdb.__init__(self)
+        self.myclient = pymongo.MongoClient(ip, port)
+        self.db=self.myclient[db_name]
+        self.col=self.db[col_name]
+
+
+    def insert_data(self):
+        #ans=self.col.insert_one({"name":self.filename})
+        #self.ans = ans
+        fs = gridfs.GridFS(self.db)
+        file_id = fs.put(b"ONE! TWO! THREE! GO ...", filename=f"{self.filename}");
+        print(fs.list())
+        print(fs.get(file_id).read())
+        return
+
+    def find_data(self):
+        result = self.col.find_one({"filename": self.filename})
+        self.objid = result['_id']
+        return self.objid
+
+    def delete_data(self):
+        mongo.find_data(self)
+        self.col.delete_one({"_id":self.objid})
+        return
+
+    def update_data(self):
+        #fs.update(fileId, QC_RESULT=qcResult)
         pass
 
-    def download_image(self,imageurl):
-        pass
+    def read_data(self):
+        #file = mongo.find_data(self)
+        fs = gridfs.GridFS(self.db)
+        result = fs.find_one({"filename": self.filename})
+        image = result.read()
+        return image
 
-mv = mvdb()
-imdb = mv.get_movieid("matrix")
-url = mv.get_image_url(imdb)
-mv.download_image(url)
+#if __name__ == "__main__":
+    """
+    test module
+    """
+db_name="mydatabase"
+col_name="fs.files"
+ip="localhost"
+port=27017
+mdb=mongo(ip,port,db_name,col_name)
+#mydict = {"name": "Johni", "address": "Highway to hell 666"}
+#ans=mdb.insert_data(mydict)
+#print(ans)
 
+
+imdb = mdb.get_movieid('matri')
+print(imdb)
+mdb.get_image_url(imdb)
+print(mdb.getPosterFile())
+#mdb.insert_data()
+print(mdb.read_data())
+#mdb.delete_data()
+
+
+# imdb = mv.get_movieid("matrix")
+# url = mv.get_image_url(imdb)
+# mv.getPosterFile()
 
 #mv.get_image(movieid)
 #mv.get_
 #print(mv)
 
-
-#name = 'The Lord of the Rings: The Fellowship of the Ring'
-
-
-#print(id)
