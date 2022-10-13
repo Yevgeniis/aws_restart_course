@@ -54,13 +54,15 @@ class mongo(mvdb):
         fs = gridfs.GridFS(self.db)
         with open(self.filename, 'rb') as read_file:
            file_bin = read_file.read()
-        file_id = fs.put(file_bin, filename=f"{self.filename}")
+        file_id = fs.put(file_bin, filename=f"{self.movieid}")
         print(fs.list())
         print(fs.get(file_id).read())
         return
 
     def find_data(self):
-        result = self.col.find_one({"filename": self.filename})
+        result = self.col.find_one({"filename": self.movieid})
+        if result == None:
+            return False
         self.objid = result['_id']
         return self.objid
 
@@ -76,7 +78,7 @@ class mongo(mvdb):
     def read_data(self):
         #file = mongo.find_data(self)
         fs = gridfs.GridFS(self.db)
-        result = fs.find_one({"filename": self.filename})
+        result = fs.find_one({"filename": self.movieid})
         #print(result)
         image = result.read()
         #print(image)
@@ -91,11 +93,7 @@ col_name="fs.files"
 ip="localhost"
 port=27017
 mdb=mongo(ip,port,db_name,col_name)
-#mydict = {"name": "Johni", "address": "Highway to hell 666"}
-#ans=mdb.insert_data(mydict)
-#print(ans)
 
-#
 # imdb = mdb.get_movieid('matri')
 # print(imdb)
 # mdb.get_image_url(imdb)

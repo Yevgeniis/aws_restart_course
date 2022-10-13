@@ -14,13 +14,16 @@ def about():
 def load_insert_html():
     if request.method == 'POST':
         movie_name = request.form['name']
-        imdb = mdb.get_movieid(movie_name)
 
+        imdb = mdb.get_movieid(movie_name)
+        if mdb.find_data() != False:
+            mdb.read_data()
+            return "found in DB"
         mdb.get_image_url(imdb)
         mdb.getPosterFile()
         mdb.insert_data()
-        return "matrix"
+        return "Added to db"
     return render_template('search.html')
 
 if __name__=="__main__":
-    app.run()
+    app.run(port=80)
