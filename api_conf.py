@@ -94,6 +94,8 @@ ip="localhost"
 port=27017
 mdb=mongo(ip,port,db_name,col_name)
 
+
+
 # imdb = mdb.get_movieid('matri')
 # print(imdb)
 # mdb.get_image_url(imdb)

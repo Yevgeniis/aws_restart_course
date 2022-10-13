@@ -23,7 +23,7 @@ def load_insert_html():
         mdb.getPosterFile()
         mdb.insert_data()
         return "Added to db"
-    return render_template('search.html')
+    return render_template('aa.html')
 
 if __name__=="__main__":
-    app.run(port=80)
+    app.run()
