@@ -77,9 +77,9 @@ class mongo(mvdb):
         #file = mongo.find_data(self)
         fs = gridfs.GridFS(self.db)
         result = fs.find_one({"filename": self.filename})
-        print(result)
+        #print(result)
         image = result.read()
-        print(image)
+        #print(image)
         return image
 
 #if __name__ == "__main__":
@@ -95,14 +95,14 @@ mdb=mongo(ip,port,db_name,col_name)
 #ans=mdb.insert_data(mydict)
 #print(ans)
 
-
-imdb = mdb.get_movieid('matri')
-print(imdb)
-mdb.get_image_url(imdb)
-print(mdb.getPosterFile())
-mdb.insert_data()
-print(mdb.read_data())
-#mdb.delete_data()
+#
+# imdb = mdb.get_movieid('matri')
+# print(imdb)
+# mdb.get_image_url(imdb)
+# print(mdb.getPosterFile())
+# mdb.insert_data()
+# print(mdb.read_data())
+# #mdb.delete_data()
 
 
 # imdb = mv.get_movieid("matrix")
