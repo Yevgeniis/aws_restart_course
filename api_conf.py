@@ -18,7 +18,7 @@ class mvdb():
     def get_movieid(self,movie_name):
         self.name = movie_name
         ia = imdb.Cinemagoer()
-        search = ia.search_movie(self.name)
+        search = ia.search_movie_advanced(self.name)
         self.movieid = "tt" + str(search[0].movieID)
         return self.movieid
 
@@ -54,6 +54,7 @@ class mongo(mvdb):
         fs = gridfs.GridFS(self.db)
         with open(self.filename, 'rb') as read_file:
            file_bin = read_file.read()
+           self.f_bin = file_bin
         file_id = fs.put(file_bin, filename=f"{self.movieid}")
         print(fs.list())
         print(fs.get(file_id).read())
