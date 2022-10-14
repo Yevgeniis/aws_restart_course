@@ -33,4 +33,4 @@ def load_insert_html():
     return render_template('search.html')
 
 if __name__=="__main__":
-    app.run(port=80)
+    app.run(port=80,host="0.0.0.0")
