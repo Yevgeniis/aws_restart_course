@@ -29,7 +29,7 @@ def load_insert_html():
         mdb.insert_data()
         image = b64encode(mdb.f_bin).decode("utf-8")
         src = "data:image/gif;base64," + image
-        return f'<img src={src} alt="{movie_name}" width="300" height="400">'
+        return f'<img src={src} alt="{movie_name}" width="300" height="401">'
     return render_template('search.html')
 
 if __name__=="__main__":
