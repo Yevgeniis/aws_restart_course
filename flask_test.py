@@ -22,14 +22,14 @@ def load_insert_html():
             binary_file = mdb.read_data()
             image = b64encode(binary_file).decode("utf-8")
             src = "data:image/gif;base64," + image
-            return f'<img src={src} alt="{movie_name}" width="128" height="128">'
+            return f'<img src={src} alt="{movie_name}" width="300" height="400">'
 
         mdb.get_image_url(imdb)
         mdb.getPosterFile()
         mdb.insert_data()
         image = b64encode(mdb.f_bin).decode("utf-8")
         src = "data:image/gif;base64," + image
-        return f'<img src={src} alt="{movie_name}" width="128" height="128">'
+        return f'<img src={src} alt="{movie_name}" width="300" height="400">'
     return render_template('search.html')
 
 if __name__=="__main__":

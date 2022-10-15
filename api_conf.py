@@ -19,6 +19,7 @@ class mvdb():
         self.name = movie_name
         ia = imdb.Cinemagoer()
         search = ia.search_movie_advanced(self.name)
+        print(search)
         self.movieid = "tt" + str(search[0].movieID)
         return self.movieid
 
