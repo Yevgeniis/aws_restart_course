@@ -7,4 +7,4 @@ RUN pip install flask
 RUN pip install requests
 RUN pip install cinemagoer
 RUN pip install pymongo
-ENTRYPOINT ["/usr/bin/python3","./flask_test.py"]
+ENTRYPOINT ["/usr/bin/python3","./flask_web.py"]
