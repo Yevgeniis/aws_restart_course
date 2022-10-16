@@ -3,7 +3,6 @@ import imdb
 import os
 import pymongo
 import gridfs
-
 class mvdb():
 
     def __init__(self):
@@ -16,19 +15,25 @@ class mvdb():
         self.IMG_PATTERN = 'http://api.themoviedb.org/3/movie/{imdbid}/images?api_key={KEY}'
 
     def get_movieid(self,movie_name):
-        self.name = movie_name
-        ia = imdb.Cinemagoer()
-        search = ia.search_movie_advanced(self.name)
-        print(search)
-        self.movieid = "tt" + str(search[0].movieID)
+        try:
+            self.name = movie_name
+            ia = imdb.Cinemagoer()
+            search = ia.search_movie_advanced(self.name)
+            # print(search)
+            self.movieid = "tt" + str(search[0].movieID)
+        except:
+            return f"This  Poster Not Found"
         return self.movieid
 
     def get_image_url(self,imdbid):
-        self.imgurl = self.IMG_PATTERN.format(KEY=self.KEY,imdbid=imdbid)
-        r = requests.get(self.imgurl)
-        self.api_response = r.json()
-        self.imgname = self.api_response['posters'][0]['file_path']
-        self.url = "{0}{1}{2}".format(self.base_url, self.sizes, self.imgname)
+        try:
+            self.imgurl = self.IMG_PATTERN.format(KEY=self.KEY,imdbid=imdbid)
+            r = requests.get(self.imgurl)
+            self.api_response = r.json()
+            self.imgname = self.api_response['posters'][0]['file_path']
+            self.url = "{0}{1}{2}".format(self.base_url, self.sizes, self.imgname)
+        except:
+            return f"This  Poster Not Found"
         return self.url
 
     def getPosterFile(self):
@@ -52,17 +57,23 @@ class mongo(mvdb):
     def insert_data(self):
         #ans=self.col.insert_one({"name":self.filename})
         #self.ans = ans
-        fs = gridfs.GridFS(self.db)
-        with open(self.filename, 'rb') as read_file:
-           file_bin = read_file.read()
-           self.f_bin = file_bin
-        file_id = fs.put(file_bin, filename=f"{self.movieid}")
-        print(fs.list())
-        print(fs.get(file_id).read())
+        try:
+            fs = gridfs.GridFS(self.db)
+            with open(self.filename, 'rb') as read_file:
+               file_bin = read_file.read()
+               self.f_bin = file_bin
+            file_id = fs.put(file_bin, filename=f"{self.movieid}")
+        except:
+            return f"This  Poster Not Found"
+        # print(fs.list())
+        # print(fs.get(file_id).read())
         return
 
     def find_data(self):
-        result = self.col.find_one({"filename": self.movieid})
+        try:
+            result = self.col.find_one({"filename": self.movieid})
+        except:
+            return f"This  Poster Not Found "
         if result == None:
             return False
         self.objid = result['_id']
@@ -79,11 +90,14 @@ class mongo(mvdb):
 
     def read_data(self):
         #file = mongo.find_data(self)
-        fs = gridfs.GridFS(self.db)
-        result = fs.find_one({"filename": self.movieid})
-        #print(result)
-        image = result.read()
-        #print(image)
+        try:
+            fs = gridfs.GridFS(self.db)
+            result = fs.find_one({"filename": self.movieid})
+            #print(result)
+            image = result.read()
+            #print(image)
+        except:
+            return f"This  Poster Not Found"
         return image
 
 #if __name__ == "__main__":
@@ -92,7 +106,7 @@ class mongo(mvdb):
     """
 db_name="mydatabase"
 col_name="fs.files"
-ip="db-movie"
+ip="localhost"
 port=27017
 mdb=mongo(ip,port,db_name,col_name)
 
