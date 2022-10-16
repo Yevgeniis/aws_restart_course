@@ -92,7 +92,7 @@ class mongo(mvdb):
     """
 db_name="mydatabase"
 col_name="fs.files"
-ip="localhost"
+ip="db-movie"
 port=27017
 mdb=mongo(ip,port,db_name,col_name)
 
