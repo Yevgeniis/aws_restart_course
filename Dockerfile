@@ -1,6 +1,6 @@
 FROM alpine
-COPY . /app
-WORKDIR /app
+WORKDIR /api_project
+COPY ./api_project .
 EXPOSE 80
 RUN apk add --no-cache python3 py3-pip
 RUN pip install flask
